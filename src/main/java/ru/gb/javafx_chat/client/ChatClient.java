@@ -17,11 +17,12 @@ public class ChatClient {
     }
 
     public void openConnection() throws IOException {
-        socket = new Socket("localhost", 8189);
+        socket = new Socket("127.0.0.1", 8489);
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
         new Thread(() ->{
             try {
+                waitAuth();
                 readMessages();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -29,6 +30,18 @@ public class ChatClient {
                 closeConnection();
             }
         }).start();
+    }
+
+    private void waitAuth() throws IOException {
+        while (true){
+            final String message = in.readUTF();
+            if(message.startsWith("/authok")){
+                final String[] split = message.split("\\p{Blank}+");
+                final String nick = split[1];
+                controller.addMessage(nick + " успешно авторизовался");
+                break;
+            }
+        }
     }
 
     private void closeConnection() {

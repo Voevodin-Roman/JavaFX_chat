@@ -11,17 +11,22 @@ public class ClientHandler {
     private DataInputStream in;
     private DataOutputStream out;
     private String nick;
+    private AuthService authService;
 
+    public String getNick() {
+        return nick;
+    }
 
-    public ClientHandler(Socket socket, ChatServer server) {
-
+    public ClientHandler(Socket socket, ChatServer server, AuthService authService) {
         try {
+            this.authService = authService;
             this.server = server;
             this.socket = socket;
             this.out = new DataOutputStream(socket.getOutputStream());
             this.in = new DataInputStream(socket.getInputStream());
             new  Thread(() -> {
                 try {
+                    authenticate();
                     readMessage();
                 }finally {
                     closeConnection();
@@ -29,6 +34,37 @@ public class ClientHandler {
             });
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void authenticate() {
+        while (true){
+            try {
+                final String message = in.readUTF();
+                if (message.startsWith("/auth")){
+                    String[] split = message.split("\\p{Blank}+");
+                    String login = split[1];
+                    String password = split[2];
+                    String nick = authService.getNickByLoginAndPassword(login, password);
+                    if(nick != null){
+                        if (server.isNickBusy(nick)) {
+                            sendMessage("Пользователь уже авторизован");
+                            continue;
+                        }
+                        sendMessage("/authok" + nick);
+                        this.nick = nick;
+                        server.broadcast(nick + " вошел в чат");
+                        server.subscribe(this);
+                        break;
+                    }else {
+                        sendMessage("Не верный логин или пароль");
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -49,6 +85,7 @@ public class ClientHandler {
             }
         }
         if (socket != null){
+            server.unsubscribe(this);
             try {
                 socket.close();
             } catch (IOException e) {
@@ -57,7 +94,7 @@ public class ClientHandler {
         }
     }
 
-    private void sendMessage(String message) {
+    public void sendMessage(String message) {
         try {
             out.writeUTF(message);
         } catch (IOException e) {
