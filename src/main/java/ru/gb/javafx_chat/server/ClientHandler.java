@@ -31,7 +31,7 @@ public class ClientHandler {
                 }finally {
                     closeConnection();
                 }
-            });
+            }).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,7 +51,7 @@ public class ClientHandler {
                             sendMessage("Пользователь уже авторизован");
                             continue;
                         }
-                        sendMessage("/authok" + nick);
+                        sendMessage("/authok " + nick);
                         this.nick = nick;
                         server.broadcast(nick + " вошел в чат");
                         server.subscribe(this);

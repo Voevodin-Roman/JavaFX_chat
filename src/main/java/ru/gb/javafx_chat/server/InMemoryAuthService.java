@@ -33,7 +33,7 @@ public class InMemoryAuthService implements AuthService {
     public InMemoryAuthService() {
         users = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            users.add(new UserData("nick" + i, "login" + i, "0" + i));
+            users.add(new UserData("nick" + i, "0" + i, "0" + i));
         }
     }
 
