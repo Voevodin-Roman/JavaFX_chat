@@ -59,12 +59,10 @@ public class ClientHandler {
                     }else {
                         sendMessage("Не верный логин или пароль");
                     }
-
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -108,8 +106,15 @@ public class ClientHandler {
                 final  String message = in.readUTF();
                 if ("/end".equals(message)){
                     break;
-                }
+                    //Добавляем обработка личных сообщений
+                }else if(message.startsWith("/w ")){
+                    String[] split = message.split("\\p{Blank}+", 3);
+                    String privateNick = split[1];
+                    String privateMessage = split[2];
+                    server.messageToClient(privateNick, "Личное сообщение от " + nick + " : " + privateMessage);
+                }else {
                 server.broadcast(nick + ":" + message);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

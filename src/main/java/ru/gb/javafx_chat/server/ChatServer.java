@@ -30,6 +30,14 @@ public class ChatServer {
             client.sendMessage(message);
         }
     }
+// Метед отправки личных сообщений
+    public void messageToClient(String nick, String message){
+        for (ClientHandler client : clients) {
+            if (nick.equals(client.getNick())){
+                client.sendMessage(message);
+            }
+        }
+    }
 
     public void subscribe(ClientHandler client) {
         clients.add(client);
@@ -40,7 +48,6 @@ public class ChatServer {
             if (nick.equals(client.getNick())){
                 return true;
             }
-
         }
         return false;
     }
