@@ -100,6 +100,7 @@ public class ClientHandler {
         }
     }
 
+
     private void readMessage() {
         while (true){
             try {
@@ -109,9 +110,7 @@ public class ClientHandler {
                     //Добавляем обработка личных сообщений
                 }else if(message.startsWith("/w ")){
                     String[] split = message.split("\\p{Blank}+", 3);
-                    String privateNick = split[1];
-                    String privateMessage = split[2];
-                    server.messageToClient(privateNick, "Личное сообщение от " + nick + " : " + privateMessage);
+                    server.messageToClient(split[1], "Личное сообщение от " + nick + " : " + split[2]);
                 }else {
                 server.broadcast(nick + ":" + message);
                 }
