@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ListView?>
 <VBox alignment="CENTER" spacing="5.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="ru.gb.javafx_chat.client.ChatController">
     <padding>
@@ -18,12 +19,15 @@
             <PasswordField fx:id="passField" promptText="password"/>
             <Button text="Подключится" onAction="#singninBtnClick"/>
         </HBox>
-        <VBox fx:id="messageBox" visible="false">
-            <TextArea fx:id="messageArea"  editable="false" VBox.vgrow="ALWAYS" />
-            <HBox spacing="5">
-                <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
-                <Button text="Send" defaultButton="true" onAction="#ClickSendButton"/>
-            </HBox>
-        </VBox>
+        <HBox fx:id="messageBox" visible="false">
+            <VBox>
+               <TextArea fx:id="messageArea"  editable="false" VBox.vgrow="ALWAYS" />
+               <HBox spacing="5">
+                   <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
+                   <Button text="Send" defaultButton="true" onAction="#ClickSendButton"/>
+               </HBox>
+            </VBox>
+            <ListView fx:id="clientList" minWidth="200" maxWidth="200" onMouseClicked="#seleclClient"/>
+        </HBox>
     </VBox>
 </VBox>

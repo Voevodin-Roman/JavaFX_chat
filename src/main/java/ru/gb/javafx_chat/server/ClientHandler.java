@@ -55,7 +55,7 @@ public class ClientHandler {
                         }
                         sendMessage(Command.AUTHOK, nick);
                         this.nick = nick;
-                        server.broadcast(nick + " вошел в чат");
+                        server.broadcast(Command.MESSAGE,  nick + " вошел в чат");
                         server.subscribe(this);
                         break;
                     }else {
@@ -70,7 +70,7 @@ public class ClientHandler {
         }
     }
 
-    private void sendMessage(Command command, String... params) {
+    public void sendMessage(Command command, String... params) {
         sendMessage(command.collectMessage(params));
 
     }
@@ -101,7 +101,7 @@ public class ClientHandler {
         }
     }
 
-    public void sendMessage(String message) {
+    private void sendMessage(String message) {
         try {
             out.writeUTF(message);
         } catch (IOException e) {
@@ -114,14 +114,15 @@ public class ClientHandler {
         while (true){
             try {
                 final  String message = in.readUTF();
-                if (Command.isCommand(message) && Command.getCommand(message) == Command.END){
+                Command command = Command.getCommand(message);
+                if (command == Command.END){
                     break;
                     //Добавляем обработка личных сообщений
-               //}else if(message.startsWith("/w ")){
-               //    String[] split = message.split("\\p{Blank}+", 3);
-               //    server.messageToClient(split[1], "Личное сообщение от " + nick + " : " + split[2]);
+               }else  if(command == Command.PRIVATE_MESSAGE){
+                   String[] split = command.parse(message);
+                   server.messageToClient(this, split[0], split[1]);
                 }else {
-                server.broadcast(nick + ":" + message);
+                    server.broadcast(Command.MESSAGE, nick + ":" + command.parse(message)[0]);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

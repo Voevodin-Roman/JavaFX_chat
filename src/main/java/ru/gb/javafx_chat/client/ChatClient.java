@@ -1,9 +1,13 @@
 package ru.gb.javafx_chat.client;
-
+import javafx.application.Platform;
+import ru.gb.javafx_chat.Command;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
+
+import static ru.gb.javafx_chat.Command.*;
 
 public class ChatClient {
     private final ChatController controller;
@@ -34,9 +38,10 @@ public class ChatClient {
     private void waitAuth() throws IOException {
         while (true){
             final String message = in.readUTF();
-            if(message.startsWith("/authok")){
-                final String[] split = message.split("\\p{Blank}+");
-                final String nick = split[1];
+            final Command command = getCommand(message);
+            final String[] params = command.parse(message);
+            if (command == AUTHOK) {
+                final String nick = params[0];
                 controller.setAuth(true);
                 controller.addMessage(nick + " успешно авторизовался");
                 break;
@@ -71,15 +76,27 @@ public class ChatClient {
     private void readMessages() throws IOException {
         while (true){
            final String message = in.readUTF();
-           if ("/end".equals(message)){
-               controller.setAuth(false);
-               break;
-           }
-           controller.addMessage(message);
+           final Command com = Command.getCommand(message);
+            if (END == com){
+                controller.setAuth(false);
+                break;
+            }
+            final String[] params = com.parse(message);
+            if (ERROR == com){
+                String messageError = params[0];
+                Platform.runLater(() -> controller.showError(messageError));
+                continue;
+            }
+            if (MESSAGE == com){
+                controller.addMessage(params[0]);
+            }
+            if(CLIENTS == com){
+                controller.updateClientList(params);
+            }
         }
     }
 
-    public void sendMessage(String message) {
+    void sendMessage(Command command, String message) {
         try {
             out.writeUTF(message);
         } catch (IOException e) {

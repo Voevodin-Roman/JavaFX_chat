@@ -39,9 +39,7 @@ public enum Command {
         public String[] parse(String commandText) {
             String[] split = commandText.split(TOKEN_DELIMITER);
             String[] nicks = new String[split.length - 1];
-            for (int i = 0; i < nicks.length; i++) {
-                nicks[i] = split[i +1];
-            }
+            System.arraycopy(split, 1, nicks, 0, nicks.length);
             return nicks;
         }
     },
@@ -50,6 +48,13 @@ public enum Command {
         public String[] parse(String commandText) {
                 String[] split = commandText.split(TOKEN_DELIMITER, 2);
                 return new String[]{split[0], split[1]};
+        }
+    },
+    MESSAGE("/message"){
+        @Override
+        public String[] parse(String commandText) {
+            String[] split = commandText.split(TOKEN_DELIMITER, 2);
+            return new String[]{split[0], split[1]};
         }
     };
 
@@ -87,7 +92,7 @@ public enum Command {
         }
         String cmd = message.split(TOKEN_DELIMITER, 2)[0];
         final Command command = comandMap.get(cmd);
-        return comandMap.get(cmd);
+       // return comandMap.get(cmd);
         if(command == null) {
             throw new RuntimeException("Не известная команда: " + cmd);
         }
