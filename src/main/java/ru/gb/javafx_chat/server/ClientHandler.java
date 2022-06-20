@@ -1,5 +1,7 @@
 package ru.gb.javafx_chat.server;
 
+import ru.gb.javafx_chat.Command;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -41,33 +43,40 @@ public class ClientHandler {
         while (true){
             try {
                 final String message = in.readUTF();
-                if (message.startsWith("/auth")){
-                    String[] split = message.split("\\p{Blank}+");
-                    String login = split[1];
-                    String password = split[2];
-                    String nick = authService.getNickByLoginAndPassword(login, password);
+                if (Command.isCommand(message)){
+                    Command command = Command.getCommand(message);
+                    if (command == Command.AUTH){
+                    String[] params = command.parse(message);
+                    String nick = authService.getNickByLoginAndPassword(params[0], params[1]);
                     if(nick != null){
                         if (server.isNickBusy(nick)) {
-                            sendMessage("Пользователь уже авторизован");
+                            sendMessage(Command.ERROR, "Пользователь уже авторизованн");
                             continue;
                         }
-                        sendMessage("/authok " + nick);
+                        sendMessage(Command.AUTHOK, nick);
                         this.nick = nick;
                         server.broadcast(nick + " вошел в чат");
                         server.subscribe(this);
                         break;
                     }else {
-                        sendMessage("Не верный логин или пароль");
+                        sendMessage(Command.ERROR, "Не верный логин или пароль");
                     }
+                  }
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
 
+    private void sendMessage(Command command, String... params) {
+        sendMessage(command.collectMessage(params));
+
+    }
+
     private void closeConnection() {
-        sendMessage("/end");
+        sendMessage(Command.END);
         if (in != null){
             try {
                 in.close();
@@ -105,12 +114,12 @@ public class ClientHandler {
         while (true){
             try {
                 final  String message = in.readUTF();
-                if ("/end".equals(message)){
+                if (Command.isCommand(message) && Command.getCommand(message) == Command.END){
                     break;
                     //Добавляем обработка личных сообщений
-                }else if(message.startsWith("/w ")){
-                    String[] split = message.split("\\p{Blank}+", 3);
-                    server.messageToClient(split[1], "Личное сообщение от " + nick + " : " + split[2]);
+               //}else if(message.startsWith("/w ")){
+               //    String[] split = message.split("\\p{Blank}+", 3);
+               //    server.messageToClient(split[1], "Личное сообщение от " + nick + " : " + split[2]);
                 }else {
                 server.broadcast(nick + ":" + message);
                 }

@@ -1,5 +1,11 @@
 package ru.gb.javafx_chat;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 public enum Command {
     AUTH("/auth"){
         @Override
@@ -50,8 +56,21 @@ public enum Command {
     private final String command;
     static final String TOKEN_DELIMITER = "\\p{Blank}+";
 
+    static  final Map<String, Command> comandMap = Arrays.stream(values()).collect(Collectors.toMap(Command::getCommand, Function.identity()));
+            //Map.of(
+            //"/auth", AUTH,
+            //"/authok", AUTHOK,
+            //"/end", END,
+            //"/w", PRIVATE_MESSAGE,
+            //"/clients", CLIENTS,
+            //"/error", ERROR);
+
     public String getCommand() {
         return command;
+    }
+
+    public String collectMessage(String... paramms){
+      return   this.command + " " + String.join(" ", paramms);
     }
 
     Command(String command) {
@@ -67,14 +86,13 @@ public enum Command {
             throw new RuntimeException("Не верная команда: " + message);
         }
         String cmd = message.split(TOKEN_DELIMITER, 2)[0];
-        for (Command command : values()){
-            if (command.getCommand().equals(cmd)){
-                return command;
-            }
-        }throw new RuntimeException("Не известная команда: " cmd)
+        final Command command = comandMap.get(cmd);
+        return comandMap.get(cmd);
+        if(command == null) {
+            throw new RuntimeException("Не известная команда: " + cmd);
+        }
+        return command;
     }
-
-
 
     public abstract String[] parse(String commandText);
 }

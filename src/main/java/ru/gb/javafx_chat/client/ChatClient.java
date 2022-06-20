@@ -37,6 +37,7 @@ public class ChatClient {
             if(message.startsWith("/authok")){
                 final String[] split = message.split("\\p{Blank}+");
                 final String nick = split[1];
+                controller.setAuth(true);
                 controller.addMessage(nick + " успешно авторизовался");
                 break;
             }
@@ -71,6 +72,7 @@ public class ChatClient {
         while (true){
            final String message = in.readUTF();
            if ("/end".equals(message)){
+               controller.setAuth(false);
                break;
            }
            controller.addMessage(message);
