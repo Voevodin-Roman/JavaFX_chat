@@ -106,6 +106,7 @@ public class ClientHandler {
                 final  String message = in.readUTF();
                 if ("/end".equals(message)){
                     break;
+
                     //Добавляем обработка личных сообщений
                 }else if(message.startsWith("/w ")){
                     String[] split = message.split("\\p{Blank}+", 3);
