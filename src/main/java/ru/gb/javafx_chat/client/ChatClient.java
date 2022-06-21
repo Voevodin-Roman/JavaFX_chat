@@ -88,10 +88,10 @@ public class ChatClient {
                 continue;
             }
             if (MESSAGE == com){
-                controller.addMessage(params[0]);
+                Platform.runLater(() -> controller.addMessage(params[0]));
             }
             if(CLIENTS == com){
-                controller.updateClientList(params);
+                Platform.runLater(() -> controller.updateClientList(params));
             }
         }
     }

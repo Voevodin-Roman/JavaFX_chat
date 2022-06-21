@@ -43,27 +43,24 @@ public class ClientHandler {
         while (true){
             try {
                 final String message = in.readUTF();
-                if (Command.isCommand(message)){
-                    Command command = Command.getCommand(message);
-                    if (command == Command.AUTH){
+                Command command = Command.getCommand(message);
+                if (command == Command.AUTH) {
                     String[] params = command.parse(message);
                     String nick = authService.getNickByLoginAndPassword(params[0], params[1]);
-                    if(nick != null){
+                    if (nick != null) {
                         if (server.isNickBusy(nick)) {
                             sendMessage(Command.ERROR, "Пользователь уже авторизованн");
                             continue;
                         }
                         sendMessage(Command.AUTHOK, nick);
                         this.nick = nick;
-                        server.broadcast(Command.MESSAGE,  nick + " вошел в чат");
+                        server.broadcast(Command.MESSAGE, nick + " вошел в чат");
                         server.subscribe(this);
                         break;
-                    }else {
+                    } else {
                         sendMessage(Command.ERROR, "Не верный логин или пароль");
                     }
-                  }
                 }
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -72,7 +69,6 @@ public class ClientHandler {
 
     public void sendMessage(Command command, String... params) {
         sendMessage(command.collectMessage(params));
-
     }
 
     private void closeConnection() {
@@ -109,7 +105,6 @@ public class ClientHandler {
         }
     }
 
-
     private void readMessage() {
         while (true){
             try {
@@ -117,13 +112,12 @@ public class ClientHandler {
                 Command command = Command.getCommand(message);
                 if (command == Command.END){
                     break;
-                    //Добавляем обработка личных сообщений
-               }else  if(command == Command.PRIVATE_MESSAGE){
+               }
+                if(command == Command.PRIVATE_MESSAGE){
                    String[] split = command.parse(message);
                    server.messageToClient(this, split[0], split[1]);
-                }else {
-                    server.broadcast(Command.MESSAGE, nick + ":" + command.parse(message)[0]);
                 }
+                server.broadcast(Command.MESSAGE, nick + ":" + command.parse(message)[0]);
             } catch (IOException e) {
                 e.printStackTrace();
             }

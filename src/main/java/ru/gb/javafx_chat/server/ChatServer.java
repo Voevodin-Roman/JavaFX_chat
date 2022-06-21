@@ -51,7 +51,7 @@ public class ChatServer {
 
     public void broadcast(Command command, String message) {
         for (ClientHandler client : clients.values()) {
-            client.sendMessage(Command.MESSAGE, message);
+            client.sendMessage(command.MESSAGE, message);
         }
     }
 
@@ -62,5 +62,6 @@ public class ChatServer {
     public void unsubscribe(ClientHandler client) {
         //Убираем пользователя из списка клиентов при отключении клиента
         clients.remove(client.getNick());
+        broadcastClientList();
     }
 }
