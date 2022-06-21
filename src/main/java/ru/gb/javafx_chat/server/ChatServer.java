@@ -28,12 +28,7 @@ public class ChatServer {
             e.printStackTrace();
         }
     }
-   //public void broadcast(String message){
-   //    for (ClientHandler client : clients.values()) {
-   //        client.sendMessage(Command.MESSAGE, message);
-   //    }
-   //}
-// Метед отправки личных сообщений
+
     public void messageToClient(ClientHandler from, String nick, String message){
         final ClientHandler clientTo = clients.get(nick);
         if (clientTo == null){

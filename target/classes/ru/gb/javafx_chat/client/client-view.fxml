@@ -27,7 +27,7 @@
                    <Button text="Send" defaultButton="true" onAction="#ClickSendButton"/>
                </HBox>
             </VBox>
-            <ListView fx:id="clientList" minWidth="200" maxWidth="200" onMouseClicked="#seleclClient"
+            <ListView fx:id="clientList" minWidth="200" maxWidth="200" onMouseClicked="#seleclClient"/>
         </HBox>
     </VBox>
 </VBox>
