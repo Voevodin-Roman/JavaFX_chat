@@ -14,20 +14,25 @@
         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
     </padding>
     <VBox>
-        <HBox fx:id="aurhBox">
+        <VBox fx:id="endButton" visible="false">
+            <Button text="Завершить сеанс" onAction="#endClick"/>
+        </VBox>
+        <HBox fx:id="authBox" visible="true">
             <TextField fx:id="loginField" promptText="login"/>
             <PasswordField fx:id="passField" promptText="password"/>
-            <Button text="Подключится" onAction="#singninBtnClick"/>
+            <Button text="Sign in" onAction="#signinBtnClick"/>
         </HBox>
         <HBox fx:id="messageBox" visible="false">
             <VBox>
-               <TextArea fx:id="messageArea"  editable="false" VBox.vgrow="ALWAYS" />
-               <HBox spacing="5">
-                   <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
-                   <Button text="Send" defaultButton="true" onAction="#ClickSendButton"/>
-               </HBox>
+                <TextArea fx:id="messageArea" editable="false" VBox.vgrow="ALWAYS"/>
+                <HBox spacing="10">
+                    <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
+                    <Button text="Send" defaultButton="true" onAction="#clickSendButton"/>
+                </HBox>
             </VBox>
-            <ListView fx:id="clientList" minWidth="200" maxWidth="200" onMouseClicked="#seleclClient"/>
+            <VBox>
+                <ListView fx:id="clientList" minWidth="200" maxWidth="200" onMouseClicked="#selectClient"/>
+            </VBox>
         </HBox>
     </VBox>
 </VBox>

@@ -29,7 +29,7 @@ public enum Command {
     PRIVATE_MESSAGE("/w"){
         @Override
         public String[] parse(String commandText) {
-            String[] split = commandText.split(TOKEN_DELIMITER, 3);
+            final String[] split = commandText.split(TOKEN_DELIMITER, 3);
             return new String[]{split[1], split[2]};
         }
     },
@@ -55,13 +55,13 @@ public enum Command {
         @Override
         public String[] parse(String commandText) {
             String[] split = commandText.split(TOKEN_DELIMITER, 2);
-            return new String[]{split[0], split[1]};
+            return new String[]{split[1]};
         }
     };
 
     private final String command;
     static final String TOKEN_DELIMITER = "\\p{Blank}+";
-    static  final Map<String, Command> comandMap = Arrays.stream(values()).collect(Collectors.toMap(Command::getCommand, Function.identity()));
+    static final Map<String, Command> commandMap = Arrays.stream(values()).collect(Collectors.toMap(Command::getCommand, Function.identity()));
             //Map.of(
             //"/auth", AUTH,
             //"/authok", AUTHOK,
@@ -73,8 +73,8 @@ public enum Command {
         return command;
     }
 
-    public String collectMessage(String... paramms){
-      return   this.command + " " + String.join(" ", paramms);
+    public String collectMessage(String... params){
+        return this.command + " " + String.join(" ", params);
     }
 
     Command(String command) {
@@ -86,11 +86,11 @@ public enum Command {
     }
 
     public static Command getCommand(String message){
-        if (!isCommand(message)){
-            throw new RuntimeException("Не верная команда: " + message);
-        }
+       // if (!isCommand(message)){
+       //     throw new RuntimeException("Не верная команда: " + message);
+       // }
         String cmd = message.split(TOKEN_DELIMITER, 2)[0];
-        final Command command = comandMap.get(cmd);
+        final Command command = commandMap.get(cmd);
        // return comandMap.get(cmd);
         if(command == null) {
             throw new RuntimeException("Не известная команда: " + cmd);

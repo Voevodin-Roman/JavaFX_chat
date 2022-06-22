@@ -1,11 +1,13 @@
 package ru.gb.javafx_chat.server;
 
 import ru.gb.javafx_chat.Command;
+import ru.gb.javafx_chat.client.ChatController;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.TimeUnit;
 
 public class ClientHandler {
     private Socket socket;
@@ -28,7 +30,19 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             new  Thread(() -> {
                 try {
+                    Thread timer;
+                    timer = new Thread(() -> {
+                        try {
+                            TimeUnit.SECONDS.sleep(20);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        closeConnection();
+                        new ChatController().endClick();
+                    });
+                    timer.start();
                     authenticate();
+                    timer.stop();
                     readMessage();
                 }finally {
                     closeConnection();
@@ -39,7 +53,7 @@ public class ClientHandler {
         }
     }
 
-    private void authenticate() {
+    private void authenticate(){
         while (true){
             try {
                 final String message = in.readUTF();
@@ -116,6 +130,7 @@ public class ClientHandler {
                 if(command == Command.PRIVATE_MESSAGE){
                    String[] split = command.parse(message);
                    server.messageToClient(this, split[0], split[1]);
+                   continue;
                 }
                 server.broadcast(Command.MESSAGE, nick + ":" + command.parse(message)[0]);
             } catch (IOException e) {

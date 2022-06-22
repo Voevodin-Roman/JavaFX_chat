@@ -16,8 +16,8 @@ public class ChatServer {
     }
 
     public void run() {
-        try(ServerSocket serverSocket = new ServerSocket(8489)) {
-            AuthService authService = new InMemoryAuthService();
+        try(ServerSocket serverSocket = new ServerSocket(50000);
+            AuthService authService = new InMemoryAuthService()){
             while (true) {
                 System.out.println("Waiting connection...");
                 final Socket socket = serverSocket.accept();
@@ -45,13 +45,15 @@ public class ChatServer {
     }
 
     private void broadcastClientList() {
-        String nick = clients.values().stream().map(ClientHandler::getNick).collect(Collectors.joining(" "));
+        final String nick = clients.values().stream()
+                .map(ClientHandler::getNick)
+                .collect(Collectors.joining(" "));
         broadcast(Command.CLIENTS, nick);
     }
 
     public void broadcast(Command command, String message) {
         for (ClientHandler client : clients.values()) {
-            client.sendMessage(command.MESSAGE, message);
+            client.sendMessage(command, message);
         }
     }
 

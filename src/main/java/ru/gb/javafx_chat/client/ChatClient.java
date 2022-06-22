@@ -5,7 +5,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Arrays;
 
 import static ru.gb.javafx_chat.Command.*;
 
@@ -20,7 +19,7 @@ public class ChatClient {
     }
 
     public void openConnection() throws IOException {
-        socket = new Socket("127.0.0.1", 8489);
+        socket = new Socket("127.0.0.1", 50000);
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
         new Thread(() ->{
@@ -45,6 +44,10 @@ public class ChatClient {
                 controller.setAuth(true);
                 controller.addMessage(nick + " успешно авторизовался");
                 break;
+            }
+            if (command == ERROR) {
+                Platform.runLater(() -> controller.showError(params[0]));
+                continue;
             }
         }
     }
@@ -76,12 +79,12 @@ public class ChatClient {
     private void readMessages() throws IOException {
         while (true){
            final String message = in.readUTF();
-           final Command com = Command.getCommand(message);
+           final Command com = getCommand(message);
+            final String[] params = com.parse(message);
             if (END == com){
                 controller.setAuth(false);
                 break;
             }
-            final String[] params = com.parse(message);
             if (ERROR == com){
                 String messageError = params[0];
                 Platform.runLater(() -> controller.showError(messageError));
@@ -90,17 +93,20 @@ public class ChatClient {
             if (MESSAGE == com){
                 Platform.runLater(() -> controller.addMessage(params[0]));
             }
-            if(CLIENTS == com){
+            if (CLIENTS == com){
                 Platform.runLater(() -> controller.updateClientList(params));
             }
         }
     }
 
-    void sendMessage(Command command, String message) {
+    private void sendMessage(String message) {
         try {
             out.writeUTF(message);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public void sendMessage(Command command, String... params) {
+        sendMessage(command.collectMessage(params));
     }
 }

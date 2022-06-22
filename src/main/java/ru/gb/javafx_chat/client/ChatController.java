@@ -1,21 +1,29 @@
 package ru.gb.javafx_chat.client;
 
-import javafx.collections.ObservableList;
+import java.io.IOException;
+import java.util.Optional;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import ru.gb.javafx_chat.Command;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
 
 public class ChatController {
     @FXML
+    public VBox endButton;
+    @FXML
     private ListView <String> clientList;
     @FXML
-    private HBox aurhBox;
+    private HBox authBox;
     @FXML
     private TextField loginField;
     @FXML
@@ -55,22 +63,23 @@ public class ChatController {
         }
     }
 
-    public void singninBtnClick() {
+    public void signinBtnClick() {
         client.sendMessage(Command.AUTH,loginField.getText() + " " + passField.getText());
     }
 
     public void setAuth(boolean succes){
-        aurhBox.setVisible(!succes);
+        authBox.setVisible(!succes);
         messageBox.setVisible(succes);
+        endButton.setVisible(succes);
     }
 
-    public void ClickSendButton() {
+    public void clickSendButton() {
        final String message = messageField.getText();
        if (message.isBlank()){
            return;
        }
        if (selectedNick != null){
-           client.sendMessage(Command.PRIVATE_MESSAGE,  message);
+           client.sendMessage(Command.PRIVATE_MESSAGE, selectedNick, message);
            selectedNick = null;
        }else {
            client.sendMessage(Command.MESSAGE, message);
@@ -86,11 +95,11 @@ public class ChatController {
     public void showError(String errorMessage) {
         final Alert alert = new Alert(Alert.AlertType.ERROR, errorMessage,
                 new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
-        alert.setTitle("Error!");
+        alert.setTitle("Error!!!!!!!!");
         alert.showAndWait();
     }
 
-    public void seleclClient(MouseEvent mouseEvent) {
+    public void selectClient(MouseEvent mouseEvent) {
         if (mouseEvent.getClickCount() == 2) {
             final String selectedNick = clientList.getSelectionModel().getSelectedItem();
             if (selectedNick != null && !selectedNick.isEmpty()) {
@@ -102,5 +111,9 @@ public class ChatController {
     public void updateClientList(String[] clients) {
         clientList.getItems().clear();
         clientList.getItems().addAll(clients);
+    }
+
+    public void endClick() {
+        client.sendMessage(Command.END);
     }
 }
