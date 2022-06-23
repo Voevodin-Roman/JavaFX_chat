@@ -133,4 +133,8 @@ public class ChatController {
             e.printStackTrace();
         }
     }
+
+    public ChatClient getClient() {
+        return client;
+    }
 }
