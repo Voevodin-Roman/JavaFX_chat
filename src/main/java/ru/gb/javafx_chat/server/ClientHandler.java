@@ -28,19 +28,7 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             new  Thread(() -> {
                 try {
-                    Thread timer;
-                    timer = new Thread(() -> {
-                        try {
-                            TimeUnit.SECONDS.sleep(10);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        sendMessage(Command.END, "Превышено время ожидания");
-                    });
-                    timer.start();
                     authenticate();
-                    // Команда stop() устаревшая, но в данном случае она отлично подходит.
-                    timer.stop();
                     readMessage();
                 }finally {
                     closeConnection();
@@ -54,14 +42,30 @@ public class ClientHandler {
     private void authenticate(){
         while (true){
             try {
+                //Запускаем таймер в отдельном потоке. Если таймер кончится, то передаётся таблетка END,
+                // Если клиент успел авторизоваться, то срабатывает стоп и поток с таймером закрывается.
+                sendMessage(Command.MESSAGE, "Введите логин и пароль");
+                Thread timer;
+                timer = new Thread(() -> {
+                    try {
+                        TimeUnit.SECONDS.sleep(120);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    sendMessage(Command.ERROR, "Сервер разорвал соединение");
+                    sendMessage(Command.END);
+                });
+                timer.start();
                 final String message = in.readUTF();
+                // Команда stop() устаревшая, но в данном случае она отлично подходит.
+                timer.stop();
                 Command command = Command.getCommand(message);
                 if (command == Command.AUTH) {
                     String[] params = command.parse(message);
                     String nick = authService.getNickByLoginAndPassword(params[0], params[1]);
                     if (nick != null) {
                         if (server.isNickBusy(nick)) {
-                            sendMessage(Command.ERROR, "Пользователь уже авторизованн");
+                            sendMessage(Command.ERROR, "Пользователь уже авторизован");
                             continue;
                         }
                         sendMessage(Command.AUTHOK, nick);

@@ -80,22 +80,22 @@ public enum Command {
     Command(String command) {
         this.command = command;
     }
-
-    public static boolean isCommand(String message){
+    //Этот метод тоже не нужен, у нас теперь всё команда
+    /*public static boolean isCommand(String message){
         return message.startsWith("/");
-    }
+    }*/
 
     public static Command getCommand(String message){
        // if (!isCommand(message)){
        //     throw new RuntimeException("Не верная команда: " + message);
        // }
         String cmd = message.split(TOKEN_DELIMITER, 2)[0];
-        final Command command = commandMap.get(cmd);
-       // return comandMap.get(cmd);
-        if(command == null) {
-            throw new RuntimeException("Не известная команда: " + cmd);
-        }
-        return command;
+        // return comandMap.get(cmd);
+        //Так как у нас теперь всё команда, то данная проверка не нужна
+        //if(command == null) {
+        //    throw new RuntimeException("Не известная команда: " + cmd);
+        //}
+        return commandMap.get(cmd);
     }
 
     public abstract String[] parse(String commandText);

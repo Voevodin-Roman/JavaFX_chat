@@ -16,20 +16,20 @@
     <VBox>
         <HBox >
             <Button fx:id="endButton" visible="false" text="Завершить сеанс" onAction="#endClick"/>
-            <Button fx:id="resetButton" visible="true" text="Перезапустить соединение" onAction="#endClick"/>
+            <Button fx:id="resetButton" visible="false" text="Перезапустить соединение" onAction="#resetConnection"/>
         </HBox>
         <HBox fx:id="authBox" visible="true">
             <TextField fx:id="loginField" promptText="login"/>
             <PasswordField fx:id="passField" promptText="password"/>
-            <Button text="Sign in" onAction="#signinBtnClick"/>
+            <Button fx:id="singInButton" text="Sign in" onAction="#signinBtnClick"/>
         </HBox>
 
         <HBox>
             <VBox>
                 <TextArea fx:id="messageArea" visible="true" editable="false" VBox.vgrow="ALWAYS"/>
-                <HBox  fx:id="messageBox" visible="false" spacing="10">
-                    <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
-                    <Button text="Send" defaultButton="true" onAction="#clickSendButton"/>
+                <HBox  fx:id="messageBox"  spacing="10">
+                    <TextField fx:id="messageField"  visible="false" HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="sendButton" visible="false" text="Send" defaultButton="true" onAction="#clickSendButton"/>
                 </HBox>
             </VBox>
             <VBox>

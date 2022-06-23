@@ -1,11 +1,11 @@
 package ru.gb.javafx_chat.client;
+
 import javafx.application.Platform;
 import ru.gb.javafx_chat.Command;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-
 import static ru.gb.javafx_chat.Command.*;
 
 public class ChatClient {
@@ -39,6 +39,11 @@ public class ChatClient {
             final String message = in.readUTF();
             final Command command = getCommand(message);
             final String[] params = command.parse(message);
+            if (END == command){
+                controller.setAuth(false);
+                controller.resetButtonStatus(true);
+                break;
+            }
             if (command == AUTHOK) {
                 //После авторизации очищаем текстовое поле от ошибок
                 controller.clearMessageArea();
@@ -85,7 +90,10 @@ public class ChatClient {
             final String[] params = com.parse(message);
             if (END == com){
                 controller.setAuth(false);
-                break;
+                controller.resetButtonStatus(true);
+                String messageEnd = params[0];
+                Platform.runLater(() -> controller.showError(messageEnd));
+                continue;
             }
             if (ERROR == com){
                 String messageError = params[0];
@@ -108,6 +116,7 @@ public class ChatClient {
             e.printStackTrace();
         }
     }
+
     public void sendMessage(Command command, String... params) {
         sendMessage(command.collectMessage(params));
     }

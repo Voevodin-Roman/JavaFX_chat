@@ -1,7 +1,6 @@
 package ru.gb.javafx_chat.server;
 
 import ru.gb.javafx_chat.Command;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -31,10 +30,11 @@ public class ChatServer {
 
     public void messageToClient(ClientHandler from, String nick, String message){
         final ClientHandler clientTo = clients.get(nick);
-        if (clientTo == null){
-            from.sendMessage(Command.ERROR, "Пользователь не авторизован");
-            return;
-        }
+        // Этот сценарий проверки не нужен. Мы выбираем из клиент листа только авторизованных пользователей
+        // if (clientTo == null){
+        //    from.sendMessage(Command.ERROR, "Пользователь не авторизован");
+        //    return;
+        //}
         clientTo.sendMessage(Command.MESSAGE, from.getNick() + " private message: " + message);
         from.sendMessage(Command.MESSAGE, "Пользователю " + nick + " : " + message);
     }

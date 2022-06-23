@@ -2,13 +2,10 @@ package ru.gb.javafx_chat.client;
 
 import java.io.IOException;
 import java.util.Optional;
-
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import ru.gb.javafx_chat.Command;
 
 public class ChatController {
@@ -17,6 +14,10 @@ public class ChatController {
     @FXML
     public Button resetButton;
     @FXML
+    public Button sendButton;
+    @FXML
+    public Button singInButton;
+    @FXML
     private ListView <String> clientList;
     @FXML
     private HBox authBox;
@@ -24,8 +25,6 @@ public class ChatController {
     private TextField loginField;
     @FXML
     private PasswordField passField;
-    @FXML
-    private HBox messageBox;
     @FXML
     private TextArea messageArea;
     @FXML
@@ -65,12 +64,15 @@ public class ChatController {
 
     public void setAuth(boolean succes){
         authBox.setVisible(!succes);
-        messageBox.setVisible(succes);
         endButton.setVisible(succes);
-        resetButton.setVisible(!succes);
         clientList.setVisible(succes);
+        messageField.setVisible(succes);
+        sendButton.setVisible(succes);
+    }
 
-
+    public void resetButtonStatus(boolean succes){
+        resetButton.setVisible(succes);
+        singInButton.setVisible(!succes);
     }
 
     public void clickSendButton() {
@@ -99,7 +101,6 @@ public class ChatController {
         // alert.setTitle("Error!!!!!!!!");
         // alert.showAndWait();
         addMessage("Error:  " + errorMessage);
-
     }
 
     public void selectClient(MouseEvent mouseEvent) {
@@ -122,5 +123,14 @@ public class ChatController {
     }
     public void clearMessageArea(){
         messageArea.clear();
+    }
+
+    public void resetConnection() {
+        resetButtonStatus(false);
+        try {
+            client.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
