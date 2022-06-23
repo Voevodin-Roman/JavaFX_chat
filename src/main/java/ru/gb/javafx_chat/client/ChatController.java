@@ -5,13 +5,7 @@ import java.util.Optional;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -19,7 +13,9 @@ import ru.gb.javafx_chat.Command;
 
 public class ChatController {
     @FXML
-    public VBox endButton;
+    public Button endButton;
+    @FXML
+    public Button resetButton;
     @FXML
     private ListView <String> clientList;
     @FXML
@@ -71,6 +67,10 @@ public class ChatController {
         authBox.setVisible(!succes);
         messageBox.setVisible(succes);
         endButton.setVisible(succes);
+        resetButton.setVisible(!succes);
+        clientList.setVisible(succes);
+
+
     }
 
     public void clickSendButton() {
@@ -93,10 +93,13 @@ public class ChatController {
     }
 
     public void showError(String errorMessage) {
-        final Alert alert = new Alert(Alert.AlertType.ERROR, errorMessage,
-                new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
-        alert.setTitle("Error!!!!!!!!");
-        alert.showAndWait();
+        //Вместо аллерта выводим ошибки в текстовое поле
+        // final Alert alert = new Alert(Alert.AlertType.ERROR, errorMessage,
+        //         new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
+        // alert.setTitle("Error!!!!!!!!");
+        // alert.showAndWait();
+        addMessage("Error:  " + errorMessage);
+
     }
 
     public void selectClient(MouseEvent mouseEvent) {
@@ -114,6 +117,10 @@ public class ChatController {
     }
 
     public void endClick() {
+        messageArea.clear();
         client.sendMessage(Command.END);
+    }
+    public void clearMessageArea(){
+        messageArea.clear();
     }
 }

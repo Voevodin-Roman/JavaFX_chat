@@ -40,13 +40,15 @@ public class ChatClient {
             final Command command = getCommand(message);
             final String[] params = command.parse(message);
             if (command == AUTHOK) {
+                //После авторизации очищаем текстовое поле от ошибок
+                controller.clearMessageArea();
                 final String nick = params[0];
                 controller.setAuth(true);
                 controller.addMessage(nick + " успешно авторизовался");
                 break;
             }
             if (command == ERROR) {
-                Platform.runLater(() -> controller.showError(params[0]));
+                Platform.runLater(() -> controller.showError(params[1]));
                 continue;
             }
         }

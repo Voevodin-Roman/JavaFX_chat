@@ -1,8 +1,6 @@
 package ru.gb.javafx_chat.server;
 
 import ru.gb.javafx_chat.Command;
-import ru.gb.javafx_chat.client.ChatController;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -33,15 +31,15 @@ public class ClientHandler {
                     Thread timer;
                     timer = new Thread(() -> {
                         try {
-                            TimeUnit.SECONDS.sleep(20);
+                            TimeUnit.SECONDS.sleep(10);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        closeConnection();
-                        new ChatController().endClick();
+                        sendMessage(Command.END, "Превышено время ожидания");
                     });
                     timer.start();
                     authenticate();
+                    // Команда stop() устаревшая, но в данном случае она отлично подходит.
                     timer.stop();
                     readMessage();
                 }finally {
