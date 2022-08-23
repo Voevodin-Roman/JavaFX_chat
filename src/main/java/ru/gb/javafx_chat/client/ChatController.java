@@ -59,6 +59,7 @@ public class ChatController {
     }
 
     public void signinBtnClick() {
+
         client.sendMessage(Command.AUTH,loginField.getText() + " " + passField.getText());
     }
 
