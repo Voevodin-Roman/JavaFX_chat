@@ -1,8 +1,9 @@
 package ru.gb.javafx_chat.server;
 
-import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class InMemoryAuthService implements AuthService {
     private static class UserData{
@@ -28,21 +29,21 @@ public class InMemoryAuthService implements AuthService {
             return password;
         }
     }
-    private final List<UserData> users;
 
-    public InMemoryAuthService() {
-        users = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            users.add(new UserData("nick" + i, "0" + i, "0" + i));
-        }
+    public Connection connectionToBase() throws SQLException {
+        Connection connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/pass.db");
+        return connection;
     }
 
     @Override
-    public String getNickByLoginAndPassword(String login, String password) {
-        for (UserData user : users) {
-            if (login.equals(user.getLogin()) && password.equals(user.getPassword())){
-                return user.getNick();
-            }
+    public String getNickByLoginAndPassword(String login, String password) throws SQLException {
+        Statement statement = connectionToBase().createStatement();
+        String request = "SELECT nick FROM users WHERE login=\"" + login + "\" AND password=\"" + password + "\"";
+        System.out.println(request);
+        ResultSet resultSet = statement.executeQuery(request);
+        connectionToBase().close();
+        if (resultSet.next()){
+           return resultSet.getString("nick");
         }
         return null;
     }
@@ -50,5 +51,23 @@ public class InMemoryAuthService implements AuthService {
     @Override
     public void close() {
         System.out.println("authentication service stopped");
+    }
+
+    @Override
+    public void registrationInChat(String nick, String login, String password) throws SQLException {
+        Statement statement = connectionToBase().createStatement();
+
+
+        connectionToBase().close();
+
+    }
+
+    @Override
+    public boolean changeNickname(String nick, String password, String newPassword) throws SQLException {
+        Statement statement = connectionToBase().createStatement();
+
+
+        connectionToBase().close();
+        return false;
     }
 }

@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 public class ClientHandler {
@@ -28,7 +29,11 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             new  Thread(() -> {
                 try {
-                    authenticate();
+                    try {
+                        authenticate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     readMessage();
                 }finally {
                     closeConnection();
@@ -39,7 +44,7 @@ public class ClientHandler {
         }
     }
 
-    private void authenticate(){
+    private void authenticate() throws SQLException {
         while (true){
             try {
                 //Запускаем таймер в отдельном потоке. Если таймер кончится, то передаётся таблетка END,
