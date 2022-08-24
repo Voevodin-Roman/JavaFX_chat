@@ -31,15 +31,13 @@ public class InMemoryAuthService implements AuthService {
     }
 
     public Connection connectionToBase() throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:src/main/resources/pass.db");
-        return connection;
+        return DriverManager.getConnection("jdbc:sqlite:src/main/resources/pass.db");
     }
 
     @Override
     public String getNickByLoginAndPassword(String login, String password) throws SQLException {
         Statement statement = connectionToBase().createStatement();
-        String request = "SELECT nick FROM users WHERE login=\"" + login + "\" AND password=\"" + password + "\"";
-        System.out.println(request);
+        String request = "SELECT nick FROM users WHERE login='" + login + "' AND password='" + password + "'";
         ResultSet resultSet = statement.executeQuery(request);
         connectionToBase().close();
         if (resultSet.next()){
@@ -54,20 +52,32 @@ public class InMemoryAuthService implements AuthService {
     }
 
     @Override
-    public void registrationInChat(String nick, String login, String password) throws SQLException {
-        Statement statement = connectionToBase().createStatement();
-
-
-        connectionToBase().close();
+    public boolean registrationInChat(String nick, String login, String password) {
+        int insertNewUsers = 0;
+        try {
+            Statement statement = connectionToBase().createStatement();
+            String parameters = "('%s', '%s', '%s')";
+            String request = "INSERT INTO users(nick, login, password) VALUES " + String.format(parameters, nick, login, password);
+            insertNewUsers = statement.executeUpdate(request);
+            connectionToBase().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return insertNewUsers != 0;
 
     }
 
     @Override
-    public boolean changeNickname(String nick, String password, String newPassword) throws SQLException {
-        Statement statement = connectionToBase().createStatement();
-
-
-        connectionToBase().close();
-        return false;
+    public boolean changeNickname(String newNick, String login, String password) {
+        int updatedNick = 0;
+        try {
+            Statement statement = connectionToBase().createStatement();
+            String request = "UPDATE users set nick='" + newNick + "'WHERE login='" + login + "' AND password='" + password + "'";
+            updatedNick = statement.executeUpdate(request);
+            connectionToBase().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return updatedNick != 0;
     }
 }
