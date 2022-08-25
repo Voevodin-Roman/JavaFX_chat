@@ -2,6 +2,8 @@ package ru.gb.javafx_chat.client;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -17,6 +19,10 @@ public class ChatController {
     public Button sendButton;
     @FXML
     public Button singInButton;
+    @FXML
+    public Button registration;
+    @FXML
+    public TextField nickField;
     @FXML
     private ListView <String> clientList;
     @FXML
@@ -59,8 +65,13 @@ public class ChatController {
     }
 
     public void signinBtnClick() {
+       if(nickField.getText() == null){
+         client.sendMessage(Command.AUTH,loginField.getText() + " " + passField.getText());
+       }else{
+           client.sendMessage(Command.REG,loginField.getText() + " " + passField.getText() + " " + nickField.getText());
+       }
 
-        client.sendMessage(Command.AUTH,loginField.getText() + " " + passField.getText());
+
     }
 
     public void setAuth(boolean succes){
@@ -111,6 +122,9 @@ public class ChatController {
                 this.selectedNick = selectedNick;
             }
         }
+    }
+
+    public void registration(ActionEvent actionEvent) {
     }
 
     public void updateClientList(String[] clients) {

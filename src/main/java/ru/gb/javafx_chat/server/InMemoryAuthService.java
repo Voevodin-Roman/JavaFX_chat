@@ -6,30 +6,6 @@ import java.util.List;
 
 
 public class InMemoryAuthService implements AuthService {
-    private static class UserData{
-        private final String nick;
-        private String login;
-        private String password;
-
-        public UserData(String nick, String login, String password) {
-            this.nick = nick;
-            this.login = login;
-            this.password = password;
-        }
-        public UserData(String nick) {
-            this.nick = nick;
-        }
-        public String getNick() {
-            return nick;
-        }
-        public String getLogin() {
-            return login;
-        }
-        public String getPassword() {
-            return password;
-        }
-    }
-
     public Connection connectionToBase() throws SQLException {
         return DriverManager.getConnection("jdbc:sqlite:src/main/resources/pass.db");
     }

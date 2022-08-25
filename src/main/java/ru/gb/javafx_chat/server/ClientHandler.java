@@ -82,6 +82,7 @@ public class ClientHandler {
                         sendMessage(Command.ERROR, "Не верный логин или пароль");
                     }
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

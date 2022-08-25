@@ -17,8 +17,10 @@
         <HBox >
             <Button fx:id="endButton" visible="false" text="Завершить сеанс" onAction="#endClick"/>
             <Button fx:id="resetButton" visible="false" text="Перезапустить соединение" onAction="#resetConnection"/>
+            <Button fx:id="registration" visible="true" text="Регистрация в чате" onAction="#registration"/>
         </HBox>
         <HBox fx:id="authBox" visible="true">
+            <TextField fx:id="nickField" visible="false" promptText="Nick"/>
             <TextField fx:id="loginField" promptText="login"/>
             <PasswordField fx:id="passField" promptText="password"/>
             <Button fx:id="singInButton" text="Sign in" onAction="#signinBtnClick"/>

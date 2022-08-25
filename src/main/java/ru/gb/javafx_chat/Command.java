@@ -6,6 +6,20 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Command {
+    NICK("/nick"){
+        @Override
+        public String[] parse(String commandText) {
+            String[] split = commandText.split(TOKEN_DELIMITER);
+            return new String[]{split[1], split[2], split[3]};
+        }
+    },
+    REG("/reg"){
+        @Override
+        public String[] parse(String commandText) {
+            String[] split = commandText.split(TOKEN_DELIMITER);
+            return new String[]{split[1], split[2], split[3]};
+        }
+    },
     AUTH("/auth"){
         @Override
         public String[] parse(String commandText) {
