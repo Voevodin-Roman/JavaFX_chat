@@ -5,6 +5,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 public class ClientHandler {
@@ -28,7 +29,11 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             new  Thread(() -> {
                 try {
-                    authenticate();
+                    try {
+                        authenticate();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     readMessage();
                 }finally {
                     closeConnection();
@@ -39,7 +44,7 @@ public class ClientHandler {
         }
     }
 
-    private void authenticate(){
+    private void authenticate() throws SQLException {
         while (true){
             try {
                 //Запускаем таймер в отдельном потоке. Если таймер кончится, то передаётся таблетка END,
@@ -53,7 +58,6 @@ public class ClientHandler {
                         e.printStackTrace();
                     }
                     sendMessage(Command.ERROR, "Сервер разорвал соединение");
-                    sendMessage(Command.END);
                 });
                 timer.start();
                 final String message = in.readUTF();
@@ -76,7 +80,26 @@ public class ClientHandler {
                     } else {
                         sendMessage(Command.ERROR, "Не верный логин или пароль");
                     }
+                }else if(command == Command.REG){
+                    String[] params = command.parse(message);
+                    Boolean nick = authService.registrationInChat(params[2], params[0], params[1]);
+                    if (nick) {
+                        sendMessage(Command.ERROR, "Пользователь создан");
+                        sendMessage(Command.END);
+                        continue;
+                    }sendMessage(Command.ERROR, "Пользователь с таким ником и логином уже существует");
+                    break;
+                }else if(command == Command.NICK){
+                    String[] params = command.parse(message);
+                    Boolean nickTemp = authService.changeNickname(params[0], params[1]);
+                    if (nickTemp) {
+                        sendMessage(Command.ERROR, "Ник изменен");
+                        sendMessage(Command.END);
+                        continue;
+                    }sendMessage(Command.ERROR, "Пользователь с таким ником уже существует");
+                    break;
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

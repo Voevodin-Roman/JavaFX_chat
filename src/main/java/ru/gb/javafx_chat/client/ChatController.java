@@ -2,6 +2,8 @@ package ru.gb.javafx_chat.client;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
@@ -17,6 +19,16 @@ public class ChatController {
     public Button sendButton;
     @FXML
     public Button singInButton;
+    @FXML
+    public Button registration;
+    @FXML
+    public TextField nickField;
+    @FXML
+    public Button registrationButton;
+    @FXML
+    public Button changeNick;
+    @FXML
+    public Button changeNickButton;
     @FXML
     private ListView <String> clientList;
     @FXML
@@ -59,20 +71,67 @@ public class ChatController {
     }
 
     public void signinBtnClick() {
-        client.sendMessage(Command.AUTH,loginField.getText() + " " + passField.getText());
+         client.sendMessage(Command.AUTH,loginField.getText() + " " + passField.getText());
+    }
+
+    public void registration() {
+        regestrationButonStatus(true);
+
+    }
+    public void registrationBtnClick() {
+        client.sendMessage(Command.REG,loginField.getText() + " " + passField.getText() + " " + nickField.getText());
+    }
+
+    public void changedNick() {
+        nickButonStatus(true);
+        try {
+            client.openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void changeNickBtnClick() {
+        client.sendMessage(Command.NICK, client.nick + " "+ nickField.getText());
     }
 
     public void setAuth(boolean succes){
-        authBox.setVisible(!succes);
+        nickField.setVisible(!succes);
+        loginField.setVisible(!succes);
+        passField.setVisible(!succes);
+        singInButton.setVisible(!succes);
+        registrationButton.setVisible(!succes);
+        changeNickButton.setVisible(!succes);
         endButton.setVisible(succes);
         clientList.setVisible(succes);
         messageField.setVisible(succes);
         sendButton.setVisible(succes);
+        registration.setVisible(!succes);
+        nickField.setVisible(!succes);
+        changeNick.setVisible(succes);
+
     }
 
     public void resetButtonStatus(boolean succes){
+        nickField.setVisible(!succes);
         resetButton.setVisible(succes);
         singInButton.setVisible(!succes);
+        registration.setVisible(!succes);
+        registrationButton.setVisible(!succes);
+        changeNick.setVisible(!succes);
+
+    }
+
+    public void regestrationButonStatus(boolean succes){
+        nickField.setVisible(succes);
+        registrationButton.setVisible(succes);
+        singInButton.setVisible(!succes);
+        changeNick.setVisible(!succes);
+    }
+
+    public void nickButonStatus(boolean succes){
+        nickField.setVisible(succes);
+        changeNickButton.setVisible(succes);
     }
 
     public void clickSendButton() {
@@ -100,7 +159,7 @@ public class ChatController {
         //         new ButtonType("OK", ButtonBar.ButtonData.OK_DONE));
         // alert.setTitle("Error!!!!!!!!");
         // alert.showAndWait();
-        addMessage("Error:  " + errorMessage);
+        addMessage("Системное сообщение:  " + errorMessage);
     }
 
     public void selectClient(MouseEvent mouseEvent) {
@@ -111,6 +170,8 @@ public class ChatController {
             }
         }
     }
+
+
 
     public void updateClientList(String[] clients) {
         clientList.getItems().clear();
@@ -137,4 +198,7 @@ public class ChatController {
     public ChatClient getClient() {
         return client;
     }
+
+
+
 }
