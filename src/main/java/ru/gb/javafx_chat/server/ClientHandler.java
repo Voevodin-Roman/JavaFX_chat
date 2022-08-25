@@ -81,6 +81,18 @@ public class ClientHandler {
                     } else {
                         sendMessage(Command.ERROR, "Не верный логин или пароль");
                     }
+                }else if(command == Command.REG){
+                    String[] params = command.parse(message);
+                    Boolean nick = authService.registrationInChat(params[2], params[0], params[1]);
+                    if (nick) {
+                        sendMessage(Command.ERROR, "Пользователь создан");
+                        continue;
+                    }sendMessage(Command.ERROR, "Пользователь с таким ником уже существует");
+                    break;
+                }else if(command == Command.NICK){
+                    String[] params = command.parse(message);
+                    Boolean nick = authService.registrationInChat(nick, params[1]);
+                    break;
                 }
 
             } catch (IOException e) {

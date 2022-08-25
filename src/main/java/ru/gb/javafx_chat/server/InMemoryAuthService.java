@@ -44,11 +44,11 @@ public class InMemoryAuthService implements AuthService {
     }
 
     @Override
-    public boolean changeNickname(String newNick, String login, String password) {
+    public boolean changeNickname(String newNick, String nick) {
         int updatedNick = 0;
         try {
             Statement statement = connectionToBase().createStatement();
-            String request = "UPDATE users set nick='" + newNick + "'WHERE login='" + login + "' AND password='" + password + "'";
+            String request = "UPDATE users set nick='" + newNick + "'WHERE nick='" + nick + "'";
             updatedNick = statement.executeUpdate(request);
             connectionToBase().close();
         } catch (SQLException e) {

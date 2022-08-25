@@ -24,6 +24,10 @@ public class ChatController {
     @FXML
     public TextField nickField;
     @FXML
+    public Button registrationButton;
+    @FXML
+    public Button changeNick;
+    @FXML
     private ListView <String> clientList;
     @FXML
     private HBox authBox;
@@ -65,13 +69,19 @@ public class ChatController {
     }
 
     public void signinBtnClick() {
-       if(nickField.getText() == null){
          client.sendMessage(Command.AUTH,loginField.getText() + " " + passField.getText());
-       }else{
-           client.sendMessage(Command.REG,loginField.getText() + " " + passField.getText() + " " + nickField.getText());
-       }
+    }
+
+    public void registration() {
+        regestrationButonStatus(true);
 
 
+    }
+    public void registrationBtnClick() {
+        client.sendMessage(Command.REG,loginField.getText() + " " + passField.getText() + " " + nickField.getText());
+    }
+
+    public void changedNick(ActionEvent actionEvent) {
     }
 
     public void setAuth(boolean succes){
@@ -80,10 +90,22 @@ public class ChatController {
         clientList.setVisible(succes);
         messageField.setVisible(succes);
         sendButton.setVisible(succes);
+        registration.setVisible(!succes);
+        registrationButton.setVisible(!succes);
+        nickField.setVisible(!succes);
     }
 
     public void resetButtonStatus(boolean succes){
         resetButton.setVisible(succes);
+        singInButton.setVisible(!succes);
+        registration.setVisible(!succes);
+        registrationButton.setVisible(!succes);
+
+    }
+
+    public void regestrationButonStatus(boolean succes){
+        nickField.setVisible(succes);
+        registrationButton.setVisible(succes);
         singInButton.setVisible(!succes);
     }
 
@@ -124,8 +146,7 @@ public class ChatController {
         }
     }
 
-    public void registration(ActionEvent actionEvent) {
-    }
+
 
     public void updateClientList(String[] clients) {
         clientList.getItems().clear();
@@ -152,4 +173,7 @@ public class ChatController {
     public ChatClient getClient() {
         return client;
     }
+
+
+
 }
