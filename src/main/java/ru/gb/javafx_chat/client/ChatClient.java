@@ -33,6 +33,7 @@ public class ChatClient {
             }
         }).start();
     }
+    String nick;
 
     private void waitAuth() throws IOException {
         while (true){
@@ -47,7 +48,7 @@ public class ChatClient {
             if (command == AUTHOK) {
                 //После авторизации очищаем текстовое поле от ошибок
                 controller.clearMessageArea();
-                final String nick = params[0];
+                nick = params[0];
                 controller.setAuth(true);
                 controller.addMessage(nick + " успешно авторизовался");
                 break;

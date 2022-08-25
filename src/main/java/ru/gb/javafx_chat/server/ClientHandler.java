@@ -58,7 +58,6 @@ public class ClientHandler {
                         e.printStackTrace();
                     }
                     sendMessage(Command.ERROR, "Сервер разорвал соединение");
-                    sendMessage(Command.END);
                 });
                 timer.start();
                 final String message = in.readUTF();
@@ -86,12 +85,18 @@ public class ClientHandler {
                     Boolean nick = authService.registrationInChat(params[2], params[0], params[1]);
                     if (nick) {
                         sendMessage(Command.ERROR, "Пользователь создан");
+                        sendMessage(Command.END);
                         continue;
-                    }sendMessage(Command.ERROR, "Пользователь с таким ником уже существует");
+                    }sendMessage(Command.ERROR, "Пользователь с таким ником и логином уже существует");
                     break;
                 }else if(command == Command.NICK){
                     String[] params = command.parse(message);
-                    Boolean nick = authService.registrationInChat(nick, params[1]);
+                    Boolean nickTemp = authService.changeNickname(params[0], params[1]);
+                    if (nickTemp) {
+                        sendMessage(Command.ERROR, "Ник изменен");
+                        sendMessage(Command.END);
+                        continue;
+                    }sendMessage(Command.ERROR, "Пользователь с таким ником уже существует");
                     break;
                 }
 

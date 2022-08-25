@@ -10,7 +10,7 @@ public enum Command {
         @Override
         public String[] parse(String commandText) {
             String[] split = commandText.split(TOKEN_DELIMITER);
-            return new String[]{split[1]};
+            return new String[]{split[1], split[2]};
         }
     },
     REG("/reg"){
